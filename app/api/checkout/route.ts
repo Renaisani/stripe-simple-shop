@@ -1,3 +1,4 @@
+import { CartItem } from '@/stripe-cart-kit';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Cart is empty or invalid' }, { status: 400 });
         }
 
-        const line_items = cartItems.map((item: any) => ({
+        const line_items = (cartItems as CartItem[]).map((item: CartItem) => ({
             price_data: {
                 currency: 'usd',
                 product_data: {
@@ -33,8 +34,13 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json({ url: session.url });
-    } catch (err: any) {
-        console.error('[Stripe Checkout Error]', err);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            console.error('[Stripe Checkout Error]', err.message);
+        } else {
+            console.error('[Stripe Checkout Error]', err);
+        }
+
         return NextResponse.json(
             { error: 'Failed to create Stripe checkout session' },
             { status: 500 }

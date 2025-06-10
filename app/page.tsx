@@ -1,10 +1,10 @@
-import Image from "next/image";
+import Link from 'next/link';
 
 export default function Home() {
   return (
     <main>
       <h1>Welcome to CamGear</h1>
-      <a href="/products">Browse Products</a>
+      <Link href="/products">Browse Products</Link>
     </main>
   );
 }

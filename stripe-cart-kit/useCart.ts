@@ -1,6 +1,6 @@
 'use client'
 import { useContext } from 'react';
-import { CartItem } from './types';
+// import { CartItem } from './types';
 import { CartContext } from './CartContext';
 
 export const useCart = () => {
