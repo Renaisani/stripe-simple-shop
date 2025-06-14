@@ -29,7 +29,7 @@ export async function POST(request: Request) {
             payment_method_types: ['card'],
             line_items,
             mode: 'payment',
-            success_url: `${request.headers.get('origin')}/confirmation`,
+            success_url: `${request.headers.get('origin')}/confirmation?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${request.headers.get('origin')}/cart`,
         });
 

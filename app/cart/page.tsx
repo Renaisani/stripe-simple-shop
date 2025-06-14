@@ -1,5 +1,6 @@
 'use client';
 import { useCart } from "@/stripe-cart-kit";
+import Link from "next/link";
 
 export default function CartPage() {
     const { cartItems, removeItem, updateItemQuantity } = useCart();
@@ -36,6 +37,7 @@ export default function CartPage() {
         <main>
             <h1>Your Cart</h1>
             {cartItems.length === 0 && <p>Your cart is empty.</p>}
+            <Link href="/products">Back to Products</Link>
             {cartItems.map(item => (
                 <div key={item.id} style={{ marginBottom: '1rem' }}>
                     <span>{item.name}</span>

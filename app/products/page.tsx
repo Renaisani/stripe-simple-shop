@@ -1,5 +1,6 @@
 'use client'
 import { useCart } from "@/stripe-cart-kit";
+import Link from "next/link";
 
 const products = [
     { id: '1', name: 'Canon EOS R5', price: 389900 },
@@ -20,6 +21,7 @@ export default function Products() {
                     <button onClick={() => addItem(product)}>Add to Cart</button>
                 </div>
             ))}
+            <Link href="/cart">View Cart</Link>
         </main>
     );
 }
