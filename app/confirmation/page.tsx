@@ -1,9 +1,9 @@
 'use client';
 import { useStripeCheckoutConfirmation } from '@/hooks/stripe/useStripeCheckoutConfirmation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-
-export default function Confirmation() {
+function ConfirmationContent() {
     const status = useStripeCheckoutConfirmation();
 
     return (
@@ -14,5 +14,14 @@ export default function Confirmation() {
             {status === 'failed' && <h1>Could not verify payment.</h1>}
             <Link href="/">Return Home</Link>
         </main>
+    );
+}
+
+
+export default function ConfirmationPage() {
+    return (
+        <Suspense fallback={<h1>Loading...</h1>}>
+            <ConfirmationContent />
+        </Suspense>
     );
 }
