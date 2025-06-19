@@ -1,9 +1,6 @@
+import { stripe } from '@/lib/stripe/stripe';
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-    apiVersion: '2025-05-28.basil',
-});
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
@@ -19,7 +16,6 @@ export async function GET(req: Request) {
         if (session.payment_status === 'paid') {
             return NextResponse.json({
                 success: true,
-                created: session.created, // ⏱️ Unix timestamp in seconds
             });
         } else {
             return NextResponse.json({ success: false });

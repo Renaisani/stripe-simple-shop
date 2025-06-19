@@ -1,29 +1,18 @@
-import { CartItem } from '@/stripe-cart-kit';
+import { stripe } from '@/lib/stripe/stripe';
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-    apiVersion: '2025-05-28.basil',
-});
 
 export async function POST(request: Request) {
     try {
-        const { cartItems } = await request.json();
+        const { line_items } = await request.json();
 
-        if (!Array.isArray(cartItems) || cartItems.length === 0) {
-            return NextResponse.json({ error: 'Cart is empty or invalid' }, { status: 400 });
+        if (!Array.isArray(line_items)) {
+            return NextResponse.json({ error: 'First' }, { status: 400 });
         }
 
-        const line_items = (cartItems as CartItem[]).map((item: CartItem) => ({
-            price_data: {
-                currency: 'usd',
-                product_data: {
-                    name: item.name,
-                },
-                unit_amount: item.price, // cents
-            },
-            quantity: item.quantity,
-        }));
+        if (line_items.length === 0) {
+            return NextResponse.json({ error: 'Second' }, { status: 400 });
+        }
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
