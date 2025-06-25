@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stripe Simple Shop
 
-## Getting Started
+A **bare‑bones starter** that shows how to plug **Stripe Checkout** into a **Next.js** app with as little code as possible. The goal is to keep the Stripe bits in one place so you can copy‑paste the parts you need into any project.
 
-First, run the development server:
+> **Status:** early draft – still learning as I go 🙂
+
+---
+
+## 🌱 Why I built this
+
+I wanted a simple playground where I could:
+
+1. List products that live in my Stripe Dashboard.
+2. Drop them in a cart.
+3. Click **Checkout** and let Stripe handle the payment form.
+
+That’s it—no extra databases, no fancy state machines. Just the basics so I can reuse the pattern later.
+
+---
+
+## 🏃‍♂️ Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1 ‑ Clone
+$ git clone https://github.com/Renaisani/stripe-simple-shop.git
+$ cd stripe-simple-shop
+
+# 2 ‑ Install deps (pick one)
+$ pnpm install   # or npm install / yarn install / bun install
+
+# 3 ‑ Add your Stripe keys
+$ cp .env.example .env.local   # then edit the file
+
+# 4 ‑ Run in dev mode
+$ npm run dev     # opens http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+What goes in **`.env.local`** (example):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+STRIPE_SECRET_KEY=sk_test_xxx
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open the site, add a product to the cart, and hit **Checkout**. You should land on Stripe’s hosted payment page.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🗂️ Key folders
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Path          | What’s inside                            |
+| ------------- | ---------------------------------------- |
+| `app/`        | Next.js App Router pages & API routes    |
+| `components/` | React components (ProductCard, Cart)     |
+| `lib/stripe/` | Small helpers to init Stripe server‑side |
+| `hooks/`      | `useCart` + other React hooks            |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+*(I’m slowly moving common Stripe code into its own folder so it’s easier to copy into new projects.)*
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚙️ How the checkout flow works
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Product list** – The home page fetches price IDs listed in `NEXT_PUBLIC_STRIPE_PRICE_MAP` and shows them as products.
+2. **Cart** – `useCart` stores items in `localStorage`.
+3. **Checkout API** – `/app/api/checkout/route.ts` creates a Stripe Checkout Session with those items and returns a redirect URL.
+4. **Redirect** – The browser navigates to that URL; Stripe takes payment.
+5. **Confirmation** - After checkout, Stripe redirects user to a order confirmation page.
+
+---
+
+## 🚧 Next steps (my to‑do list)
+
+* [ ] Add Redis/Valkey(still deciding) integration to handle storing price data and eventually user data
+* [ ] Add user authentication so carts and orders are tied to user accounts
+* [ ] Add Stripe subscription functionality
+* [ ] Add pay-wall blocked content delivery system to share files/photos/videos like Skillshare/Patreon
+
+
