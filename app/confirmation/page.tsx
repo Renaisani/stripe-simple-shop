@@ -1,26 +1,47 @@
 'use client';
 import { useStripeCheckoutConfirmation } from '@/hooks/stripe/useStripeCheckoutConfirmation';
-import Link from 'next/link';
 import { Suspense } from 'react';
+import PaidConfirmationPage from './order-paid';
+import Header from '@/components/ui/Header';
+import Footer from '@/components/ui/Footer';
+import VerifyingConfirmationPage from './order-verifying';
+import UnknownConfirmationPage from './no-order';
+import ConfirmationFailurePage from './order-failed';
 
 function ConfirmationContent() {
-    const status = useStripeCheckoutConfirmation();
+    const { status, order } = useStripeCheckoutConfirmation();
 
     return (
-        <main>
-            {status === 'verifying' && <h1>Verifying your payment...</h1>}
-            {status === 'non-payment' && <h1>No order confirmation found</h1>}
-            {status === 'paid' && <h1>Thank you for your order!</h1>}
-            {status === 'failed' && <h1>Could not verify payment.</h1>}
-            <Link href="/">Return Home</Link>
-        </main>
+        <>
+            <Header />
+            <main className='products-page'>
+                {status === 'verifying' && <VerifyingConfirmationPage />}
+                {status === 'non-payment' && <UnknownConfirmationPage />}
+                {status === 'paid' && <PaidConfirmationPage order={order} />}
+                {status === 'failed' && <ConfirmationFailurePage />}
+            </main>
+            <Footer />
+        </>
+    );
+}
+
+function ConfirmationFallback() {
+
+    return (
+        <>
+            <Header />
+            <main className='products-page'>
+                <VerifyingConfirmationPage />
+            </main>
+            <Footer />
+        </>
     );
 }
 
 
 export default function ConfirmationPage() {
     return (
-        <Suspense fallback={<h1>Loading...</h1>}>
+        <Suspense fallback={<ConfirmationFallback />}>
             <ConfirmationContent />
         </Suspense>
     );

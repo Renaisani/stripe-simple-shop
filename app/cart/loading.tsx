@@ -1,12 +1,12 @@
 'use client';
-import Link from "next/link";
+import Header from "@/components/ui/Header";
+
 
 export default function CartLoadingPage() {
 
     return (
-        <main>
-            <h1>Your Cart</h1>
-            <Link href="/products">Back to Products</Link>
-        </main>
+        <div className="bg-gray-100 min-h-screen">
+            <Header />
+        </div>
     );
 }

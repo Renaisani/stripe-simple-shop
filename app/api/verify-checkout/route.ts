@@ -1,5 +1,6 @@
 import { stripe } from '@/lib/stripe/stripe';
 import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
 
 export async function GET(req: Request) {
@@ -13,9 +14,26 @@ export async function GET(req: Request) {
     try {
         const session = await stripe.checkout.sessions.retrieve(sessionId);
 
+        const lineItems = await stripe.checkout.sessions.listLineItems(sessionId, {
+            limit: 100,
+            expand: ['data.price.product'],
+        });
+
         if (session.payment_status === 'paid') {
             return NextResponse.json({
                 success: true,
+                session: {
+                    id: session.id,
+                    created: session.created,          // unix-seconds
+                    amount: session.amount_total,     // in cents
+                    currency: session.currency,
+                },
+                items: lineItems.data.map(li => ({
+                    name: (li.price!.product as Stripe.Product).name,
+                    quantity: li.quantity,
+                    unit_price: li.amount_total / li.quantity!,
+                    total: li.amount_total,
+                })),
             });
         } else {
             return NextResponse.json({ success: false });
